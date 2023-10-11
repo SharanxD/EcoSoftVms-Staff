@@ -12,10 +12,11 @@ class Visitor{
   final String aadharnumber;
 }
 class Staff{
-  Staff({required this.EmailId,required this.UserName,required this.phoneno});
+  Staff({required this.EmailId,required this.UserName,required this.phoneno,required this.ProfileLink});
   final String UserName;
   final String EmailId;
   final String phoneno;
+  final String ProfileLink;
 }
 class LogBook{
   LogBook({required this.VisitorName, required this.Purpose,required this.Checkedin,required this.Checkedout,required this.id});

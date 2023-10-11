@@ -16,6 +16,14 @@ class StaffHomeScreen extends StatefulWidget {
 }
 
 class _StaffHomeScreenState extends State<StaffHomeScreen> {
+  Staff staff= Staff(EmailId: "Loading..", UserName:"Loading..", phoneno: "Loading..",ProfileLink: "");
+
+  Future<void> profile() async{
+    Staff temp = await _s.getprofile(FirebaseAuth.instance.currentUser!.email.toString());
+    setState(() {
+      staff= temp;
+    });
+  }
   final PageController _pagecontroller = PageController(initialPage: 1);
   final _controller =NotchBottomBarController(index: 1);
   final Services _s= Services();
@@ -31,7 +39,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
   }
   @override
   void initState(){
-
+    profile();
     getlog();
     super.initState();
   }
@@ -44,7 +52,7 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
     List<Widget> pages = [
       LogScreen(log: log,),
       const StaffDashBoard(),
-      const ProfileScreen()
+      ProfileScreen(s: staff,)
     ];
 
     return SafeArea(
@@ -89,22 +97,24 @@ class _StaffHomeScreenState extends State<StaffHomeScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(left: 10.0),
+                            padding: const EdgeInsets.only(left: 10.0,top: 8,bottom: 8,right: 8),
                             child: Text(titles[_controller.index],
                                 style: GoogleFonts.questrial(
                                     fontSize: 32, fontWeight: FontWeight.bold)),
                           ),
-                          GestureDetector(
-                            onTap: (){
-                              _pagecontroller.jumpToPage(2);
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ClipRect(
-                                child: Image.asset(
-                                  "assets/profile.png",
-                                  width: 50,
-                                ),
+                          Visibility(
+                            visible: _controller.index!=2,
+                            child: GestureDetector(
+                              onTap: (){
+                                _pagecontroller.jumpToPage(2);
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(50),
+                                  child: staff.ProfileLink==""?Image.asset("assets/profile.png",width: 50,):
+                                  Image.network(staff.ProfileLink,width: 50,height: 50,fit: BoxFit.cover,),
+                                )
                               ),
                             ),
                           )

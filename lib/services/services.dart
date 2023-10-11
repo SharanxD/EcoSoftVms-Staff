@@ -10,7 +10,8 @@ class Services{
     Map<String,dynamic> obj={
       "UserName": s.UserName,
       "EmailId": s.EmailId,
-      "Phoneno": s.phoneno
+      "Phoneno": s.phoneno,
+      "ProfileLink": s.ProfileLink
 
     };
     String docId= s.UserName;
@@ -179,7 +180,7 @@ class Services{
     final snapshot=await firestore.collection("Staff").get();
     final List<DocumentSnapshot> documents = snapshot.docs;
     for(DocumentSnapshot element in documents){
-      staffs.add(Staff(EmailId: element["EmailId"], UserName: element["UserName"],phoneno: element["Phoneno"]));
+      staffs.add(Staff(EmailId: element["EmailId"], UserName: element["UserName"],phoneno: element["Phoneno"],ProfileLink: element["ProfileLink"]));
     }
     return staffs;
   }
@@ -199,12 +200,12 @@ class Services{
   }
 
   Future<Staff> getprofile(String email) async{
-    Staff s = Staff(EmailId: "Loading..", UserName: "loading..", phoneno: "Loading..");
+    Staff s = Staff(EmailId: "Loading..", UserName: "loading..", phoneno: "Loading..",ProfileLink: "");
     final snapshot = await firestore.collection("Staff").get();
     final List<DocumentSnapshot> documents = snapshot.docs;
     for(DocumentSnapshot element in documents){
       if(element["EmailId"]==email){
-        s= Staff(EmailId: element["EmailId"], UserName: element["UserName"], phoneno: element["Phoneno"]);
+        s= Staff(EmailId: element["EmailId"], UserName: element["UserName"], phoneno: element["Phoneno"],ProfileLink: element["ProfileLink"]);
 
       }
     }
@@ -220,5 +221,9 @@ class Services{
       }
     }
     return temp;
+  }
+  Future<void> addprofileimage(String link,Staff s) async{
+    await firestore.collection("Staff").doc(s.UserName).update(
+        {"ProfileLink": link}).then((value) => print("Link Added")).catchError((error)=>print(error.toString()));
   }
 }

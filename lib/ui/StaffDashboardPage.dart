@@ -53,7 +53,6 @@ class _StaffDashBoardState extends State<StaffDashBoard> {
       });
 
     }
-
   }
   Future<void> getreq() async{
     List<Requests> temp= await _s.getstaffreq(FirebaseAuth.instance.currentUser!.displayName!) as List<Requests>;
@@ -99,6 +98,7 @@ class _StaffDashBoardState extends State<StaffDashBoard> {
 
   }
   Future<void> getcheckin() async{
+
     int count=0;
     for(var a in log){
       if(a.Checkedout==""){

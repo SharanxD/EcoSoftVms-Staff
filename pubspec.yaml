@@ -25,7 +25,9 @@ dependencies:
   path_provider: any
   share_plus: any
   csv: ^5.0.2
-  permission_handler: any
+  permission_handler: ^10.1.0
+  image_picker: any
+  firebase_storage: any
 
 dev_dependencies:
   flutter_test:

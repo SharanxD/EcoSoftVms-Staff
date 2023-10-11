@@ -66,7 +66,7 @@ class _StaffLoginState extends State<StaffLogin> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SizedBox(height: size.height*0.1,),
-                        ClipRect(child: Image.asset("assets/profile.png",width: 200,),),
+                        ClipRRect(child: Image.asset("assets/vmspic.jpeg",width: 300,),borderRadius: BorderRadius.circular(100),),
                         Padding(
                           padding: const EdgeInsets.only(top :20.0,bottom: 20),
                           child: Text("Login to Network",style: GoogleFonts.questrial(fontSize: 32,fontWeight: FontWeight.bold),),
@@ -158,11 +158,19 @@ class _StaffLoginState extends State<StaffLogin> {
                                 loading=true;
                               });
                               await FirebaseAuth.instance.signInWithEmailAndPassword(email: _emailcontroller.text, password: _pwdcontroller.text)
-                                  .then((value){
-
-                                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>StaffHomeScreen()));
-
-                              }).onError((error, stackTrace){
+                                  .then((value) async{
+                                    if(FirebaseAuth.instance.currentUser!.emailVerified){
+                                      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>StaffHomeScreen()));
+                                    }else{
+                                      FloatingSnackBar(message: "Please Verify your email", context: context,textStyle: GoogleFonts.questrial(fontSize: 20));
+                                      await FirebaseAuth.instance.currentUser!.sendEmailVerification();
+                                      await FirebaseAuth.instance.signOut();
+                                      setState(() {
+                                        _pwdcontroller.clear();
+                                        pwdgiven=false;
+                                      });
+                                    }
+                                }).onError((error, stackTrace){
                                 if(error.toString()=="[firebase_auth/network-request-failed] A network error (such as timeout, interrupted connection or unreachable host) has occurred."){
                                   FloatingSnackBar(message: "Please Connect to Internet", context: context,textStyle: GoogleFonts.questrial(fontSize: 18));
                                 }
@@ -209,7 +217,7 @@ class _StaffLoginState extends State<StaffLogin> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(bottom:50.0,top: 50),
+                          padding: const EdgeInsets.only(bottom:20.0,top: 20),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -272,6 +280,7 @@ class _RegisterPageState extends State<RegisterPage> {
   bool pwdgiven=false;
   bool cnfpwdgiven=false;
   bool phonenovalid=false;
+  bool loading = false;
   final Services _s=Services();
 
   @override
@@ -484,19 +493,22 @@ class _RegisterPageState extends State<RegisterPage> {
                       padding: const EdgeInsets.all(20.0),
                       child: GestureDetector(
                         onTap: () async{
+                          setState(() {
+                            loading=true;
+                          });
                           if(namegiven && emailvalid && pwdgiven && cnfpwdgiven && phonenovalid){
-                            Staff s = Staff(EmailId: _emailcontroller.text, UserName: _usernamecontroller.text,phoneno: _phonecontroller.text);
+                            Staff s = Staff(EmailId: _emailcontroller.text, UserName: _usernamecontroller.text,phoneno: _phonecontroller.text,ProfileLink: "");
                             await FirebaseAuth.instance.createUserWithEmailAndPassword(email: s.EmailId, password: _pwdcontroller.text)
-                                .then((value){
-                              FirebaseAuth.instance.currentUser?.updateDisplayName(s.UserName);
+                                .then((value)async{
+                              await FirebaseAuth.instance.currentUser?.updateDisplayName(s.UserName);
+                              await FirebaseAuth.instance.currentUser?.sendEmailVerification();
                               _s.addStaff(s);
                               _usernamecontroller.clear();
                               _emailcontroller.clear();
                               _pwdcontroller.clear();
                               _confirmpwdcontroller.clear();
+                              FloatingSnackBar(message: "Please find the verification in your mail", context: context,textStyle: GoogleFonts.questrial(fontSize: 18));
                               Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const StaffLogin()));
-                              FloatingSnackBar(message: "User Created. Please Login", context: context,textStyle: GoogleFonts.questrial(fontSize: 18));
-
                             });
 
 
@@ -513,6 +525,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           }else{
                             FloatingSnackBar(message: "Enter all the details", context: context,textStyle: GoogleFonts.questrial(fontSize: 18));
                           }
+                          setState(() {
+                            loading=false;
+                          });
 
                         },
                         child: Container(
@@ -526,7 +541,11 @@ class _RegisterPageState extends State<RegisterPage> {
                                 const BoxShadow(color: Colors.white,blurRadius: 10,offset: Offset(-5, -5),spreadRadius: 1)
                               ]
                           ),
-                          child: Center(child: Text("Register",style: GoogleFonts.questrial(fontSize: 24,color: Colors.blueGrey,fontWeight: FontWeight.bold),)),
+                          child: Center(child: loading?const SpinKitThreeBounce(
+                            color: Colors.blueGrey,
+                            size: 30,
+
+                          ):Text("Register",style: GoogleFonts.questrial(fontSize: 24,color: Colors.blueGrey,fontWeight: FontWeight.bold),)),
                         ),
                       ),
                     ),
