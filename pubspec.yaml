@@ -1,0 +1,45 @@
+name: ecosoftvmsstaff
+description: A new Flutter project.
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.1.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  google_fonts: any
+  intl: any
+  firebase_core: any
+  firebase_auth: any
+  cloud_firestore: any
+  floating_snackbar: any
+  animated_notch_bottom_bar: any
+  url_launcher: any
+  mailer: any
+  flutter_spinkit: any
+  http: any
+  email_validator: any
+  rotating_icon_button: any
+  path_provider: any
+  share_plus: any
+  csv: ^5.0.2
+  permission_handler: any
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+  flutter_launcher_icons: any
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "icon/appicon2.png"
+
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
+    - icon/
