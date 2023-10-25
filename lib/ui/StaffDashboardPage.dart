@@ -317,10 +317,11 @@ class _StaffDashBoardState extends State<StaffDashBoard> {
                               ..recipients.add(_emailcontroller.text)
                               ..subject = 'Appointment Registration'
                               ..text= ""
-                              ..html = "Hello\n, Your invited for an appointment with $Staffname on ${datecontroller.text}.Please register in this link. <a href='https://fir-test-1ed02.web.app/'>https://fir-test-1ed02.web.app/</a>";
+                              ..html = "Hello\n, Your invited for an appointment with $Staffname on ${datecontroller.text}.Please register in this link. <a href='https://fir-test-1ed02.web.app/'>https://fir-test-1ed02.web.app/</a>\nThe session wil end in 30 minutes.";
 
                             try {
                               await send(message, smtpServer);
+                              await _s.startlink();
                               //notificationApi.sendNotification("Invitation", "The Invitation has been successfully sent");
                               //FloatingSnackBar(message: "Invitation Sent", context: context,textStyle: GoogleFonts.questrial(fontSize: 18));
                               _emailcontroller.clear();

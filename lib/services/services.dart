@@ -226,4 +226,10 @@ class Services{
     await firestore.collection("Staff").doc(s.UserName).update(
         {"ProfileLink": link}).then((value) => print("Link Added")).catchError((error)=>print(error.toString()));
   }
+  Future<void> startlink() async{
+    final currentDatetime =  DateTime.now();
+    await firestore.collection("hosting").doc("hosttime").update(
+      {"timestamp": currentDatetime}
+    );
+  }
 }
